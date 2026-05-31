@@ -1,5 +1,79 @@
-<div class="gallery">
-  <img src="images/DSC4831.JPG" alt="项目图片1">
-  <img src="images/DSC4835.JPG" alt="项目图片2">
-  <img src="images/DSC4841.JPG" alt="项目图片3">
-</div>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>毕业纪念相册</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-content">
+      <p class="tag">Graduation Memories</p>
+      <h1>毕业纪念相册</h1>
+      <p class="desc">把这一刻留在这里，记录青春、告别和新的开始。</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <h2>照片墙</h2>
+      <p>点击任意图片可放大查看，记录属于我们的毕业瞬间。</p>
+    </section>
+
+    <section class="gallery">
+      <img src="images/DSC4831.JPG" alt="毕业照1" loading="lazy" decoding="async">
+      <img src="images/DSC4835.JPG" alt="毕业照2" loading="lazy" decoding="async">
+      <img src="images/DSC4841.JPG" alt="毕业照3" loading="lazy" decoding="async">
+      <img src="images/DSC4844.JPG" alt="毕业照4" loading="lazy" decoding="async">
+      <img src="images/DSC4852.JPG" alt="毕业照5" loading="lazy" decoding="async">
+      <img src="images/DSC4853.JPG" alt="毕业照6" loading="lazy" decoding="async">
+      <img src="images/DSC4854.JPG" alt="毕业照7" loading="lazy" decoding="async">
+      <img src="images/DSC4861.JPG" alt="毕业照8" loading="lazy" decoding="async">
+      <img src="images/DSC4862.JPG" alt="毕业照9" loading="lazy" decoding="async">
+      <img src="images/DSC4863.JPG" alt="毕业照10" loading="lazy" decoding="async">
+      <img src="images/DSC4864.JPG" alt="毕业照11" loading="lazy" decoding="async">
+      <img src="images/DSC4866.JPG" alt="毕业照12" loading="lazy" decoding="async">
+      <img src="images/DSC4868.JPG" alt="毕业照13" loading="lazy" decoding="async">
+      <img src="images/DSC4869.JPG" alt="毕业照14" loading="lazy" decoding="async">
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox">
+    <span class="close" id="closeBtn">×</span>
+    <img id="lightboxImg" src="" alt="预览图片">
+  </div>
+
+  <footer>
+    <p>© 2026 Graduation Album</p>
+  </footer>
+
+  <script>
+    const images = document.querySelectorAll('.gallery img');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const closeBtn = document.getElementById('closeBtn');
+
+    images.forEach(img => {
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightbox.classList.add('show');
+      });
+    });
+
+    closeBtn.addEventListener('click', () => {
+      lightbox.classList.remove('show');
+      lightboxImg.src = '';
+    });
+
+    lightbox.addEventListener('click', e => {
+      if (e.target === lightbox) {
+        lightbox.classList.remove('show');
+        lightboxImg.src = '';
+      }
+    });
+  </script>
+
+</body>
+</html>
