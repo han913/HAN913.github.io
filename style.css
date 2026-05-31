@@ -16,6 +16,8 @@ body {
     linear-gradient(135deg, #fffaf2 0%, #f3eadf 52%, #e9dfd2 100%);
 }
 
+/* ===== 首页封面 ===== */
+
 .hero {
   position: relative;
   min-height: 76vh;
@@ -26,14 +28,16 @@ body {
   overflow: hidden;
   text-align: center;
   color: #fff;
-  background: url("photos/large/DSC4831.webp") center/cover no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero-mask {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(135deg, rgba(18, 18, 18, 0.72), rgba(18, 18, 18, 0.22)),
+    linear-gradient(135deg, rgba(18, 18, 18, 0.68), rgba(18, 18, 18, 0.25)),
     radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.45) 85%);
 }
 
@@ -88,6 +92,8 @@ body {
   box-shadow: 0 20px 44px rgba(0, 0, 0, 0.34);
 }
 
+/* ===== 内容区 ===== */
+
 main {
   max-width: 1380px;
   margin: 0 auto;
@@ -121,6 +127,8 @@ main {
   line-height: 1.9;
 }
 
+/* ===== 桌面端瀑布流 ===== */
+
 .gallery {
   columns: 3 300px;
   column-gap: 24px;
@@ -152,6 +160,8 @@ main {
   background: #ddd;
 }
 
+/* ===== 预览层 ===== */
+
 .lightbox {
   position: fixed;
   inset: 0;
@@ -159,8 +169,8 @@ main {
   display: none;
   align-items: center;
   justify-content: center;
-  padding: 70px 22px 90px;
-  background: rgba(0, 0, 0, 0.9);
+  padding: 70px 22px 92px;
+  background: rgba(0, 0, 0, 0.92);
 }
 
 .lightbox.show {
@@ -170,6 +180,9 @@ main {
 .lightbox img {
   max-width: 94vw;
   max-height: 78vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
   border-radius: 22px;
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.78);
   background: #111;
@@ -211,49 +224,160 @@ footer {
   background: rgba(255, 255, 255, 0.48);
 }
 
+/* ===== 平板端 ===== */
+
+@media (max-width: 1024px) {
+  .gallery {
+    columns: 2 280px;
+    column-gap: 18px;
+  }
+
+  main {
+    padding: 50px 18px 78px;
+  }
+}
+
+/* ===== 手机端重点优化 ===== */
+
 @media (max-width: 768px) {
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(255, 226, 190, 0.9), transparent 36%),
+      linear-gradient(180deg, #fff9f0 0%, #f0e5d8 100%);
+  }
+
   .hero {
-    min-height: 62vh;
-    padding: 58px 16px;
+    min-height: 52vh;
+    padding: 44px 16px;
+    background-position: center top;
   }
 
   .hero-content {
-    padding: 32px 22px;
+    width: 100%;
+    max-width: 92vw;
+    padding: 28px 20px;
     border-radius: 26px;
+    backdrop-filter: blur(10px);
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+    line-height: 1.15;
   }
 
   .subtitle {
+    margin: 16px auto 24px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .hero-button {
+    padding: 11px 26px;
     font-size: 15px;
   }
 
   main {
-    padding: 42px 14px 68px;
+    padding: 34px 14px 62px;
+  }
+
+  .intro {
+    margin-bottom: 26px;
+  }
+
+  .section-tag {
+    font-size: 12px;
+    letter-spacing: 3px;
   }
 
   .intro h2 {
-    font-size: 30px;
+    font-size: 28px;
   }
 
+  .intro p {
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  /* 手机端改成单列，更适合看毕业照 */
   .gallery {
-    columns: 2 160px;
-    column-gap: 14px;
+    columns: 1;
+    column-gap: 0;
   }
 
   .gallery figure {
-    margin-bottom: 14px;
-    padding: 7px;
+    margin: 0 0 18px;
+    padding: 8px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 14px 34px rgba(87, 61, 34, 0.18);
+  }
+
+  .gallery img {
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+    object-fit: contain;
+  }
+
+  .lightbox {
+    padding: 64px 10px 86px;
+  }
+
+  .lightbox img {
+    max-width: 96vw;
+    max-height: 74vh;
+    border-radius: 16px;
+  }
+
+  .close {
+    top: 14px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    font-size: 32px;
+    line-height: 40px;
+  }
+
+  .download-btn {
+    bottom: 22px;
+    padding: 12px 24px;
+    font-size: 15px;
+    width: auto;
+    min-width: 150px;
+    text-align: center;
+  }
+
+  footer {
+    padding: 24px 10px;
+    font-size: 13px;
+  }
+}
+
+/* ===== 很小的手机 ===== */
+
+@media (max-width: 390px) {
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .intro h2 {
+    font-size: 25px;
+  }
+
+  .gallery figure {
     border-radius: 20px;
   }
 
   .gallery img {
     border-radius: 15px;
-  }
-
-  .lightbox {
-    padding: 72px 12px 88px;
-  }
-
-  .lightbox img {
-    max-height: 76vh;
   }
 }
