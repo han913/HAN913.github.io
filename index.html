@@ -11,6 +11,108 @@
         linear-gradient(135deg, rgba(18, 18, 18, 0.72), rgba(18, 18, 18, 0.22)),
         url("photos_v2/large/DSC4817_large.webp");
     }
+    .album-live-panel {
+  width: min(1100px, calc(100% - 32px));
+  margin: 48px auto 24px;
+  padding: 24px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 50px rgba(95, 75, 50, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+.album-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.album-stat-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(255, 248, 236, 0.9);
+  border: 1px solid rgba(220, 185, 135, 0.35);
+}
+
+.album-stat-card span {
+  display: block;
+  font-size: 14px;
+  color: #8a6b45;
+  margin-bottom: 8px;
+}
+
+.album-stat-card strong {
+  font-size: 34px;
+  color: #2b2b2b;
+}
+
+.barrage-box {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    linear-gradient(90deg, rgba(255, 238, 203, 0.92), rgba(255, 250, 242, 0.78)),
+    radial-gradient(circle at top left, rgba(255, 206, 120, 0.45), transparent 45%);
+  border: 1px solid rgba(220, 185, 135, 0.35);
+}
+
+.barrage-title {
+  position: absolute;
+  left: 18px;
+  top: 14px;
+  z-index: 2;
+  font-size: 14px;
+  color: #8a6b45;
+  font-weight: 700;
+}
+
+.barrage-item {
+  position: absolute;
+  left: 100%;
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 8px 24px rgba(100, 70, 35, 0.12);
+  color: #3a2c1d;
+  font-size: 15px;
+  animation-name: barrageMove;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.barrage-empty {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  color: #9a7a52;
+  font-size: 14px;
+}
+
+@keyframes barrageMove {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-150vw);
+  }
+}
+
+@media (max-width: 720px) {
+  .album-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .barrage-box {
+    height: 130px;
+  }
+
+  .barrage-item {
+    font-size: 13px;
+  }
+}
   </style>
 </head>
 <body>
@@ -27,6 +129,24 @@
   </header>
 
   <main>
+    <section class="album-live-panel">
+  <div class="album-stats">
+    <div class="album-stat-card">
+      <span>待审核投稿</span>
+      <strong id="pendingCount">--</strong>
+    </div>
+
+    <div class="album-stat-card">
+      <span>已通过投稿</span>
+      <strong id="approvedCount">--</strong>
+    </div>
+  </div>
+
+  <div class="barrage-box" id="barrageBox">
+    <div class="barrage-title">投稿留言弹幕</div>
+    <div class="barrage-empty">审核通过后的留言会在这里滚动显示。</div>
+  </div>
+</section>
     <section class="intro">
       <p class="section-tag">Photos</p>
       <h2>我们的毕业瞬间</h2>
@@ -103,6 +223,9 @@
   const closeBtn = document.getElementById('closeBtn');
   const downloadBtn = document.getElementById('downloadBtn');
   const approvedGallery = document.getElementById('approvedGallery');
+  const pendingCountEl = document.getElementById('pendingCount');
+  const approvedCountEl = document.getElementById('approvedCount');
+  const barrageBox = document.getElementById('barrageBox');
 
   function openLightbox(previewUrl, originalUrl, filename) {
     lightboxImg.src = previewUrl;
@@ -173,16 +296,13 @@
       photos.forEach(photo => {
         if (!photo.secure_url) return;
 
-        // 首页显示：压缩预览图，加载快
         const thumb = cloudinaryTransform(
           photo.secure_url,
           'c_limit,w_520,q_auto:eco,f_auto'
         );
 
-        // 点击打开：原图
         const original = photo.secure_url;
 
-        // 下载：原图附件下载
         const download = cloudinaryTransform(
           photo.secure_url,
           'fl_attachment'
@@ -212,6 +332,64 @@
     }
   }
 
+  async function loadAlbumStats() {
+    try {
+      const res = await fetch('/.netlify/functions/album-stats?t=' + Date.now(), {
+        cache: 'no-store'
+      });
+
+      if (!res.ok) {
+        throw new Error('HTTP ' + res.status);
+      }
+
+      const data = await res.json();
+
+      pendingCountEl.textContent = typeof data.pendingCount === 'number'
+        ? data.pendingCount
+        : '--';
+
+      approvedCountEl.textContent = typeof data.approvedCount === 'number'
+        ? data.approvedCount
+        : '--';
+
+      renderBarrage(Array.isArray(data.messages) ? data.messages : []);
+    } catch (err) {
+      console.error('加载相册统计失败：', err);
+      pendingCountEl.textContent = '--';
+      approvedCountEl.textContent = '--';
+      renderBarrage([]);
+    }
+  }
+
+  function renderBarrage(messages) {
+    barrageBox.innerHTML = '<div class="barrage-title">投稿留言弹幕</div>';
+
+    if (!messages.length) {
+      const empty = document.createElement('div');
+      empty.className = 'barrage-empty';
+      empty.textContent = '审核通过后的留言会在这里滚动显示。';
+      barrageBox.appendChild(empty);
+      return;
+    }
+
+    const rows = [48, 82, 116];
+
+    messages.forEach((item, index) => {
+      const text = item.message || '';
+      if (!text.trim()) return;
+
+      const danmaku = document.createElement('div');
+      danmaku.className = 'barrage-item';
+      danmaku.textContent = `${item.name || '匿名'}：${text}`;
+
+      danmaku.style.top = rows[index % rows.length] + 'px';
+      danmaku.style.animationDuration = 16 + (index % 6) * 2 + 's';
+      danmaku.style.animationDelay = index * 1.2 + 's';
+
+      barrageBox.appendChild(danmaku);
+    });
+  }
+
   closeBtn.addEventListener('click', closeLightbox);
 
   lightbox.addEventListener('click', e => {
@@ -228,6 +406,7 @@
 
   bindStaticGallery();
   loadApprovedPhotos();
+  loadAlbumStats();
 </script>
 
 </body>
