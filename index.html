@@ -97,127 +97,138 @@
     <p>Graduation Album · 2026</p>
   </footer>
 
-  <script>
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const closeBtn = document.getElementById('closeBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const approvedGallery = document.getElementById('approvedGallery');
+ <script>
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const closeBtn = document.getElementById('closeBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const approvedGallery = document.getElementById('approvedGallery');
 
-    function openLightbox(previewUrl, originalUrl, filename) {
-      lightboxImg.src = previewUrl;
-      downloadBtn.href = originalUrl;
-      downloadBtn.setAttribute('download', filename || 'photo.jpg');
-      lightbox.classList.add('show');
-      document.body.style.overflow = 'hidden';
-    }
+  function openLightbox(previewUrl, originalUrl, filename) {
+    lightboxImg.src = previewUrl;
+    downloadBtn.href = originalUrl;
+    downloadBtn.setAttribute('download', filename || 'photo.jpg');
+    lightbox.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
 
-    function closeLightbox() {
-      lightbox.classList.remove('show');
-      lightboxImg.src = '';
-      downloadBtn.href = '';
-      document.body.style.overflow = '';
-    }
+  function closeLightbox() {
+    lightbox.classList.remove('show');
+    lightboxImg.src = '';
+    downloadBtn.href = '';
+    document.body.style.overflow = '';
+  }
 
-    function bindStaticGallery() {
-      const galleryImages = document.querySelectorAll('#gallery img');
+  function bindStaticGallery() {
+    const galleryImages = document.querySelectorAll('#gallery img');
 
-      galleryImages.forEach(img => {
-        img.addEventListener('click', () => {
-          openLightbox(
-            img.dataset.preview,
-            img.dataset.original,
-            img.dataset.original.split('/').pop()
-          );
-        });
+    galleryImages.forEach(img => {
+      img.addEventListener('click', () => {
+        openLightbox(
+          img.dataset.preview,
+          img.dataset.original,
+          img.dataset.original.split('/').pop()
+        );
       });
+    });
+  }
+
+  function cloudinaryTransform(url, transform) {
+    if (!url || !url.includes('/upload/')) {
+      return url || '';
     }
 
-    function cloudinaryTransform(url, transform) {
-      if (!url || !url.includes('/upload/')) {
-        return url || '';
+    return url.replace('/upload/', `/upload/${transform}/`);
+  }
+
+  function getPhotoFilename(photo) {
+    if (photo.public_id && photo.format) {
+      return `${photo.public_id}.${photo.format}`;
+    }
+
+    return 'photo.jpg';
+  }
+
+  async function loadApprovedPhotos() {
+    try {
+      approvedGallery.innerHTML = '<p class="upload-tip">正在加载投稿照片...</p>';
+
+      const res = await fetch('/.netlify/functions/list-approved?t=' + Date.now(), {
+        cache: 'no-store'
+      });
+
+      if (!res.ok) {
+        throw new Error('HTTP ' + res.status);
       }
 
-      return url.replace('/upload/', `/upload/${transform}/`);
-    }
+      const photos = await res.json();
 
-    function getPhotoFilename(photo) {
-      if (photo.public_id && photo.format) {
-        return `${photo.public_id}.${photo.format}`;
+      if (!Array.isArray(photos) || photos.length === 0) {
+        approvedGallery.innerHTML = '<p class="upload-tip">暂无审核通过的投稿照片。</p>';
+        return;
       }
 
-      return 'photo.jpg';
-    }
+      approvedGallery.innerHTML = '';
 
-    async function loadApprovedPhotos() {
-      try {
-        approvedGallery.innerHTML = '<p class="upload-tip">正在加载投稿照片...</p>';
+      photos.forEach(photo => {
+        if (!photo.secure_url) return;
 
-        const res = await fetch('/.netlify/functions/list-approved?t=' + Date.now(), {
-          cache: 'no-store'
+        // 首页显示：压缩预览图，加载快
+        const thumb = cloudinaryTransform(
+          photo.secure_url,
+          'c_limit,w_520,q_auto:eco,f_auto'
+        );
+
+        // 点击打开：原图
+        const original = photo.secure_url;
+
+        // 下载：原图附件下载
+        const download = cloudinaryTransform(
+          photo.secure_url,
+          'fl_attachment'
+        );
+
+        const figure = document.createElement('figure');
+        const img = document.createElement('img');
+
+        img.src = thumb;
+        img.dataset.preview = original;
+        img.dataset.original = download;
+        img.alt = photo.name ? `${photo.name}的投稿照片` : '投稿照片';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+
+        img.addEventListener('click', () => {
+          openLightbox(original, download, getPhotoFilename(photo));
         });
 
-        if (!res.ok) {
-          throw new Error('HTTP ' + res.status);
-        }
+        figure.appendChild(img);
+        approvedGallery.appendChild(figure);
+      });
 
-        const photos = await res.json();
-
-        if (!Array.isArray(photos) || photos.length === 0) {
-          approvedGallery.innerHTML = '<p class="upload-tip">暂无审核通过的投稿照片。</p>';
-          return;
-        }
-
-        approvedGallery.innerHTML = '';
-
-        photos.forEach(photo => {
-          if (!photo.secure_url) return;
-
-          const thumb = cloudinaryTransform(photo.secure_url, 'f_auto,q_auto,w_600');
-          const preview = cloudinaryTransform(photo.secure_url, 'f_auto,q_auto,w_1800');
-          const original = cloudinaryTransform(photo.secure_url, 'fl_attachment');
-
-          const figure = document.createElement('figure');
-          const img = document.createElement('img');
-
-          img.src = thumb;
-          img.dataset.preview = preview;
-          img.dataset.original = original;
-          img.alt = photo.name ? `${photo.name}的投稿照片` : '投稿照片';
-          img.loading = 'lazy';
-          img.decoding = 'async';
-
-          img.addEventListener('click', () => {
-            openLightbox(preview, original, getPhotoFilename(photo));
-          });
-
-          figure.appendChild(img);
-          approvedGallery.appendChild(figure);
-        });
-
-      } catch (err) {
-        console.error('加载审核通过照片失败：', err);
-        approvedGallery.innerHTML = '<p class="upload-tip">投稿照片加载失败，请稍后刷新重试。</p>';
-      }
+    } catch (err) {
+      console.error('加载审核通过照片失败：', err);
+      approvedGallery.innerHTML = '<p class="upload-tip">投稿照片加载失败，请稍后刷新重试。</p>';
     }
+  }
 
-    closeBtn.addEventListener('click', closeLightbox);
+  closeBtn.addEventListener('click', closeLightbox);
 
-    lightbox.addEventListener('click', e => {
-      if (e.target === lightbox) {
-        closeLightbox();
-      }
-    });
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) {
+      closeLightbox();
+    }
+  });
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        closeLightbox();
-      }
-    });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeLightbox();
+    }
+  });
 
-    bindStaticGallery();
-    loadApprovedPhotos();
-  </script>
+  bindStaticGallery();
+  loadApprovedPhotos();
+</script>
 
 </body>
 </html>

@@ -12,7 +12,7 @@
   <section class="admin-card">
     <p class="section-tag">Admin</p>
     <h1>照片审核后台</h1>
-    <p class="upload-desc">输入后台密码后，可以审核同学上传的毕业照。</p>
+    <p class="upload-desc">输入后台密码后，可以审核同学上传的毕业照，也可以删除已经通过的投稿。</p>
 
     <div class="admin-login">
       <input type="password" id="adminPass" placeholder="输入审核密码">
@@ -21,7 +21,15 @@
 
     <p id="adminStatus" class="upload-tip"></p>
 
+    <h2>待审核投稿</h2>
     <div id="pendingList" class="pending-list"></div>
+
+    <hr>
+
+    <h2>已通过投稿</h2>
+    <p class="upload-desc">这里的照片已经显示在首页，点击删除后会从网站展示列表中移除。</p>
+    <button id="loadApprovedBtn" type="button">刷新已通过列表</button>
+    <div id="approvedList" class="pending-list"></div>
 
     <a class="back-link" href="index.html">返回相册首页</a>
   </section>
@@ -31,21 +39,34 @@
 const passInput = document.getElementById("adminPass");
 const statusText = document.getElementById("adminStatus");
 const pendingList = document.getElementById("pendingList");
+const approvedList = document.getElementById("approvedList");
 const loginBtn = document.getElementById("loginBtn");
+const loadApprovedBtn = document.getElementById("loadApprovedBtn");
 
-let currentPhotos = [];
+let currentPending = [];
+let currentApproved = [];
 
-loginBtn.addEventListener("click", loadPending);
+loginBtn.addEventListener("click", function () {
+  loadPending();
+  loadApproved();
+});
+
+loadApprovedBtn.addEventListener("click", loadApproved);
 
 passInput.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     loadPending();
+    loadApproved();
   }
 });
 
+function setStatus(text) {
+  statusText.textContent = text;
+}
+
 function previewUrl(url) {
   if (!url) return "";
-  return url.replace("/upload/", "/upload/f_auto,q_auto,w_700/");
+  return url.replace("/upload/", "/upload/c_limit,w_420,q_auto:eco,f_auto/");
 }
 
 async function readResponse(res) {
@@ -60,95 +81,49 @@ async function readResponse(res) {
   }
 }
 
-function setStatus(text) {
-  statusText.textContent = text;
-}
-
-function clearList() {
-  pendingList.innerHTML = "";
-}
-
-function updateCount() {
-  if (currentPhotos.length === 0) {
+function updatePendingCount() {
+  if (currentPending.length === 0) {
     setStatus("暂无待审核照片。");
   } else {
-    setStatus(`共有 ${currentPhotos.length} 张待审核照片。`);
+    setStatus(`共有 ${currentPending.length} 张待审核照片。`);
   }
 }
 
-async function loadPending() {
-  const pass = passInput.value.trim();
+function createPhotoCard(photo, type) {
+  const card = document.createElement("div");
+  card.className = "pending-card";
+  card.dataset.id = photo.id;
 
-  if (!pass) {
-    setStatus("请先输入密码。");
-    clearList();
-    return;
-  }
+  const img = document.createElement("img");
+  img.src = previewUrl(photo.secure_url);
+  img.alt = type === "pending" ? "待审核照片" : "已通过照片";
 
-  try {
-    setStatus("正在加载待审核照片...");
-    clearList();
+  const info = document.createElement("div");
+  info.className = "pending-info";
 
-    const res = await fetch("/.netlify/functions/list-pending?t=" + Date.now(), {
-      method: "GET",
-      headers: {
-        "x-admin-pass": pass
-      },
-      cache: "no-store"
-    });
+  const name = document.createElement("strong");
+  name.textContent = photo.name || "匿名";
 
-    const data = await readResponse(res);
+  const message = document.createElement("p");
+  message.textContent = photo.message || "";
 
-    if (!res.ok) {
-      throw new Error(data.error || `加载失败，状态码：${res.status}`);
-    }
+  const time = document.createElement("p");
+  time.className = "upload-tip";
 
-    currentPhotos = Array.isArray(data) ? data : [];
-
-    if (currentPhotos.length === 0) {
-      updateCount();
-      return;
-    }
-
-    renderPendingList();
-    updateCount();
-  } catch (err) {
-    console.error("loadPending error:", err);
-    setStatus("密码错误或加载失败：" + err.message);
-    clearList();
-  }
-}
-
-function renderPendingList() {
-  clearList();
-
-  currentPhotos.forEach(function (photo) {
-    const card = document.createElement("div");
-    card.className = "pending-card";
-    card.dataset.id = photo.id;
-
-    const img = document.createElement("img");
-    img.src = previewUrl(photo.secure_url);
-    img.alt = "待审核照片";
-
-    const info = document.createElement("div");
-    info.className = "pending-info";
-
-    const name = document.createElement("strong");
-    name.textContent = photo.name || "匿名";
-
-    const message = document.createElement("p");
-    message.textContent = photo.message || "";
-
-    const time = document.createElement("p");
-    time.className = "upload-tip";
+  if (type === "pending") {
     time.textContent = photo.created_at
-      ? new Date(photo.created_at).toLocaleString()
-      : "未知时间";
+      ? "上传时间：" + new Date(photo.created_at).toLocaleString()
+      : "上传时间未知";
+  } else {
+    time.textContent = photo.approved_at
+      ? "通过时间：" + new Date(photo.approved_at).toLocaleString()
+      : "通过时间未知";
+  }
 
-    const actions = document.createElement("div");
-    actions.className = "admin-actions";
+  const actions = document.createElement("div");
+  actions.className = "admin-actions";
 
+  if (type === "pending") {
     const approveBtn = document.createElement("button");
     approveBtn.type = "button";
     approveBtn.textContent = "通过";
@@ -166,17 +141,27 @@ function renderPendingList() {
 
     actions.appendChild(approveBtn);
     actions.appendChild(rejectBtn);
+  } else {
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "danger";
+    deleteBtn.textContent = "删除";
+    deleteBtn.addEventListener("click", function () {
+      deleteApproved(photo.id, card);
+    });
 
-    info.appendChild(name);
-    info.appendChild(message);
-    info.appendChild(time);
-    info.appendChild(actions);
+    actions.appendChild(deleteBtn);
+  }
 
-    card.appendChild(img);
-    card.appendChild(info);
+  info.appendChild(name);
+  info.appendChild(message);
+  info.appendChild(time);
+  info.appendChild(actions);
 
-    pendingList.appendChild(card);
-  });
+  card.appendChild(img);
+  card.appendChild(info);
+
+  return card;
 }
 
 function disableCardButtons(card, disabled) {
@@ -188,21 +173,50 @@ function disableCardButtons(card, disabled) {
   });
 }
 
-function removePhotoFromPage(id, card) {
-  currentPhotos = currentPhotos.filter(function (photo) {
-    return String(photo.id) !== String(id);
-  });
+async function loadPending() {
+  const pass = passInput.value.trim();
 
-  if (card && card.parentNode) {
-    card.parentNode.removeChild(card);
-  } else {
-    const oldCard = pendingList.querySelector(`[data-id="${CSS.escape(String(id))}"]`);
-    if (oldCard && oldCard.parentNode) {
-      oldCard.parentNode.removeChild(oldCard);
-    }
+  if (!pass) {
+    setStatus("请先输入密码。");
+    pendingList.innerHTML = "";
+    return;
   }
 
-  updateCount();
+  try {
+    setStatus("正在加载待审核照片...");
+    pendingList.innerHTML = "";
+
+    const res = await fetch("/.netlify/functions/list-pending?t=" + Date.now(), {
+      method: "GET",
+      headers: {
+        "x-admin-pass": pass
+      },
+      cache: "no-store"
+    });
+
+    const data = await readResponse(res);
+
+    if (!res.ok) {
+      throw new Error(data.error || `加载失败，状态码：${res.status}`);
+    }
+
+    currentPending = Array.isArray(data) ? data : [];
+
+    if (currentPending.length === 0) {
+      updatePendingCount();
+      return;
+    }
+
+    currentPending.forEach(function (photo) {
+      pendingList.appendChild(createPhotoCard(photo, "pending"));
+    });
+
+    updatePendingCount();
+  } catch (err) {
+    console.error("loadPending error:", err);
+    setStatus("密码错误或加载失败：" + err.message);
+    pendingList.innerHTML = "";
+  }
 }
 
 async function reviewPhoto(id, action, card) {
@@ -249,32 +263,128 @@ async function reviewPhoto(id, action, card) {
       throw new Error(data.error || `操作失败，状态码：${res.status}`);
     }
 
-    removePhotoFromPage(id, card);
+    currentPending = currentPending.filter(function (photo) {
+      return String(photo.id) !== String(id);
+    });
+
+    if (card && card.parentNode) {
+      card.parentNode.removeChild(card);
+    }
+
+    updatePendingCount();
 
     if (action === "approve") {
       alert("审核通过。");
+      loadApproved();
     } else {
       alert("已拒绝。");
     }
-
-    setTimeout(function () {
-      loadPending();
-    }, 300);
   } catch (err) {
     console.error("reviewPhoto error:", err);
 
     if (err.message === "Photo not found") {
-      removePhotoFromPage(id, card);
+      if (card && card.parentNode) {
+        card.parentNode.removeChild(card);
+      }
+
       alert("这张照片已经被处理过了，列表已刷新。");
-      setTimeout(function () {
-        loadPending();
-      }, 300);
+      loadPending();
+      loadApproved();
       return;
     }
 
     disableCardButtons(card, false);
     setStatus("操作失败：" + err.message);
     alert("操作失败：" + err.message);
+  }
+}
+
+async function loadApproved() {
+  try {
+    approvedList.innerHTML = '<p class="upload-tip">正在加载已通过投稿...</p>';
+
+    const res = await fetch("/.netlify/functions/list-approved?t=" + Date.now(), {
+      cache: "no-store"
+    });
+
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
+    }
+
+    const data = await res.json();
+    currentApproved = Array.isArray(data) ? data : [];
+
+    if (currentApproved.length === 0) {
+      approvedList.innerHTML = '<p class="upload-tip">暂无已通过投稿。</p>';
+      return;
+    }
+
+    approvedList.innerHTML = "";
+
+    currentApproved.forEach(function (photo) {
+      approvedList.appendChild(createPhotoCard(photo, "approved"));
+    });
+  } catch (err) {
+    console.error("loadApproved error:", err);
+    approvedList.innerHTML = '<p class="upload-tip">已通过列表加载失败：' + err.message + '</p>';
+  }
+}
+
+async function deleteApproved(id, card) {
+  const pass = passInput.value.trim();
+
+  if (!pass) {
+    alert("请先输入后台密码。");
+    return;
+  }
+
+  if (!id) {
+    alert("删除失败：照片 ID 为空。");
+    return;
+  }
+
+  if (!confirm("确定从网站删除这张已通过照片吗？")) {
+    return;
+  }
+
+  try {
+    disableCardButtons(card, true);
+
+    const res = await fetch("/.netlify/functions/delete-approved?t=" + Date.now(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-pass": pass
+      },
+      body: JSON.stringify({
+        id: id
+      }),
+      cache: "no-store"
+    });
+
+    const data = await readResponse(res);
+
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.error || `删除失败，状态码：${res.status}`);
+    }
+
+    currentApproved = currentApproved.filter(function (photo) {
+      return String(photo.id) !== String(id);
+    });
+
+    if (card && card.parentNode) {
+      card.parentNode.removeChild(card);
+    }
+
+    if (currentApproved.length === 0) {
+      approvedList.innerHTML = '<p class="upload-tip">暂无已通过投稿。</p>';
+    }
+
+    alert("已从网站删除。");
+  } catch (err) {
+    console.error("deleteApproved error:", err);
+    disableCardButtons(card, false);
+    alert("删除失败：" + err.message);
   }
 }
 </script>
