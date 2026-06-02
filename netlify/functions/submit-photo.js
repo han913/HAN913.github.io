@@ -1,15 +1,36 @@
-const { getStore } = require("@netlify/blobs");
+const { connectLambda, getStore } = require("@netlify/blobs");
+
+function json(statusCode, data) {
+  return {
+    statusCode,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store"
+    },
+    body: JSON.stringify(data)
+  };
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return json(405, {
+      ok: false,
+      success: false,
+      error: "Method Not Allowed"
+    });
   }
 
   try {
+    connectLambda(event);
+
     const body = JSON.parse(event.body || "{}");
 
     if (!body.secure_url || !body.public_id) {
-      return { statusCode: 400, body: "Missing image data" };
+      return json(400, {
+        ok: false,
+        success: false,
+        error: "Missing image data"
+      });
     }
 
     const store = getStore("graduation-album");
@@ -33,14 +54,18 @@ exports.handler = async (event) => {
       contentType: "application/json"
     });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ ok: true })
-    };
+    return json(200, {
+      ok: true,
+      success: true,
+      message: "上传成功，等待审核"
+    });
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: err.message
-    };
+    console.error("submit-photo error:", err);
+
+    return json(500, {
+      ok: false,
+      success: false,
+      error: err.message
+    });
   }
 };

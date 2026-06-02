@@ -1,31 +1,73 @@
-const { getStore } = require("@netlify/blobs");
+const { connectLambda, getStore } = require("@netlify/blobs");
+
+function json(statusCode, data) {
+  return {
+    statusCode,
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store"
+    },
+    body: JSON.stringify(data)
+  };
+}
+
+function getHeader(event, name) {
+  const target = name.toLowerCase();
+  const headers = event.headers || {};
+
+  for (const key of Object.keys(headers)) {
+    if (key.toLowerCase() === target) {
+      return headers[key];
+    }
+  }
+
+  return "";
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
-
-  const pass = event.headers["x-admin-pass"];
-
-  if (!process.env.ADMIN_PASS || pass !== process.env.ADMIN_PASS) {
-    return { statusCode: 401, body: "Unauthorized" };
+    return json(405, {
+      ok: false,
+      error: "Method Not Allowed"
+    });
   }
 
   try {
+    connectLambda(event);
+
+    const pass = getHeader(event, "x-admin-pass");
+
+    if (!process.env.ADMIN_PASS || pass !== process.env.ADMIN_PASS) {
+      return json(401, {
+        ok: false,
+        error: "Unauthorized"
+      });
+    }
+
     const { id, action } = JSON.parse(event.body || "{}");
+
+    if (!id) {
+      return json(400, {
+        ok: false,
+        error: "Missing photo id"
+      });
+    }
 
     const store = getStore("graduation-album");
 
     let pending = await store.get("pending", { type: "json" }) || [];
     let approved = await store.get("approved", { type: "json" }) || [];
 
-    const target = pending.find(p => p.id === id);
+    const target = pending.find((p) => p.id === id);
 
     if (!target) {
-      return { statusCode: 404, body: "Photo not found" };
+      return json(404, {
+        ok: false,
+        error: "Photo not found"
+      });
     }
 
-    pending = pending.filter(p => p.id !== id);
+    pending = pending.filter((p) => p.id !== id);
 
     if (action === "approve") {
       approved.unshift({
@@ -42,14 +84,16 @@ exports.handler = async (event) => {
       contentType: "application/json"
     });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ ok: true })
-    };
+    return json(200, {
+      ok: true,
+      success: true
+    });
   } catch (err) {
-    return {
-      statusCode: 500,
-      body: err.message
-    };
+    console.error("approve-photo error:", err);
+
+    return json(500, {
+      ok: false,
+      error: err.message
+    });
   }
 };
