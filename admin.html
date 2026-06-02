@@ -16,7 +16,7 @@
 
     <div class="admin-login">
       <input type="password" id="adminPass" placeholder="输入审核密码">
-      <button onclick="loadPending()">进入后台</button>
+      <button id="loginBtn" type="button">进入后台</button>
     </div>
 
     <p id="adminStatus" class="upload-tip"></p>
@@ -31,80 +31,170 @@
 const passInput = document.getElementById("adminPass");
 const statusText = document.getElementById("adminStatus");
 const pendingList = document.getElementById("pendingList");
+const loginBtn = document.getElementById("loginBtn");
+
+loginBtn.addEventListener("click", loadPending);
 
 function previewUrl(url) {
+  if (!url) return "";
   return url.replace("/upload/", "/upload/f_auto,q_auto,w_700/");
+}
+
+function escapeHtml(text) {
+  return String(text || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+async function readResponse(res) {
+  const text = await res.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return {
+      error: text || `HTTP ${res.status}`
+    };
+  }
 }
 
 async function loadPending() {
   const pass = passInput.value.trim();
+
   if (!pass) {
     statusText.textContent = "请先输入密码。";
     return;
   }
 
-  statusText.textContent = "正在加载待审核照片...";
-  pendingList.innerHTML = "";
+  try {
+    statusText.textContent = "正在加载待审核照片...";
+    pendingList.innerHTML = "";
 
-  const res = await fetch("/.netlify/functions/list-pending", {
-    headers: {
-      "x-admin-pass": pass
+    const res = await fetch("/.netlify/functions/list-pending", {
+      method: "GET",
+      headers: {
+        "x-admin-pass": pass
+      },
+      cache: "no-store"
+    });
+
+    const data = await readResponse(res);
+
+    if (!res.ok) {
+      throw new Error(data.error || `加载失败，状态码：${res.status}`);
     }
-  });
 
-  if (!res.ok) {
-    statusText.textContent = "密码错误或加载失败。";
-    return;
+    const photos = Array.isArray(data) ? data : [];
+
+    if (photos.length === 0) {
+      statusText.textContent = "暂无待审核照片。";
+      return;
+    }
+
+    statusText.textContent = `共有 ${photos.length} 张待审核照片。`;
+
+    photos.forEach((photo) => {
+      const card = document.createElement("div");
+      card.className = "pending-card";
+
+      const img = document.createElement("img");
+      img.src = previewUrl(photo.secure_url);
+      img.alt = "待审核照片";
+
+      const info = document.createElement("div");
+      info.className = "pending-info";
+
+      const name = document.createElement("strong");
+      name.textContent = photo.name || "匿名";
+
+      const message = document.createElement("p");
+      message.textContent = photo.message || "";
+
+      const time = document.createElement("p");
+      time.className = "upload-tip";
+      time.textContent = photo.created_at
+        ? new Date(photo.created_at).toLocaleString()
+        : "未知时间";
+
+      const actions = document.createElement("div");
+      actions.className = "admin-actions";
+
+      const approveBtn = document.createElement("button");
+      approveBtn.type = "button";
+      approveBtn.textContent = "通过";
+      approveBtn.addEventListener("click", () => {
+        reviewPhoto(photo.id, "approve");
+      });
+
+      const rejectBtn = document.createElement("button");
+      rejectBtn.type = "button";
+      rejectBtn.className = "danger";
+      rejectBtn.textContent = "拒绝";
+      rejectBtn.addEventListener("click", () => {
+        reviewPhoto(photo.id, "reject");
+      });
+
+      actions.appendChild(approveBtn);
+      actions.appendChild(rejectBtn);
+
+      info.appendChild(name);
+      info.appendChild(message);
+      info.appendChild(time);
+      info.appendChild(actions);
+
+      card.appendChild(img);
+      card.appendChild(info);
+
+      pendingList.appendChild(card);
+    });
+  } catch (err) {
+    console.error("loadPending error:", err);
+    statusText.textContent = "密码错误或加载失败：" + err.message;
   }
-
-  const photos = await res.json();
-
-  if (photos.length === 0) {
-    statusText.textContent = "暂无待审核照片。";
-    return;
-  }
-
-  statusText.textContent = `共有 ${photos.length} 张待审核照片。`;
-
-  photos.forEach(photo => {
-    const card = document.createElement("div");
-    card.className = "pending-card";
-
-    card.innerHTML = `
-      <img src="${previewUrl(photo.secure_url)}" alt="待审核照片">
-      <div class="pending-info">
-        <strong>${photo.name || "匿名"}</strong>
-        <p>${photo.message || ""}</p>
-        <p class="upload-tip">${new Date(photo.created_at).toLocaleString()}</p>
-        <div class="admin-actions">
-          <button onclick="reviewPhoto('${photo.id}', 'approve')">通过</button>
-          <button class="danger" onclick="reviewPhoto('${photo.id}', 'reject')">拒绝</button>
-        </div>
-      </div>
-    `;
-
-    pendingList.appendChild(card);
-  });
 }
 
 async function reviewPhoto(id, action) {
   const pass = passInput.value.trim();
 
-  const res = await fetch("/.netlify/functions/approve-photo", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-admin-pass": pass
-    },
-    body: JSON.stringify({ id, action })
-  });
-
-  if (!res.ok) {
-    alert("操作失败");
+  if (!pass) {
+    alert("请先输入后台密码。");
     return;
   }
 
-  await loadPending();
+  if (!id) {
+    alert("操作失败：照片 ID 为空。");
+    return;
+  }
+
+  try {
+    const res = await fetch("/.netlify/functions/approve-photo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin-pass": pass
+      },
+      body: JSON.stringify({
+        id: id,
+        action: action
+      }),
+      cache: "no-store"
+    });
+
+    const data = await readResponse(res);
+
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.error || `操作失败，状态码：${res.status}`);
+    }
+
+    alert(action === "approve" ? "审核通过。" : "已拒绝。");
+    await loadPending();
+  } catch (err) {
+    console.error("reviewPhoto error:", err);
+    alert("操作失败：" + err.message);
+  }
 }
 </script>
 
