@@ -33,20 +33,19 @@ const statusText = document.getElementById("adminStatus");
 const pendingList = document.getElementById("pendingList");
 const loginBtn = document.getElementById("loginBtn");
 
+let currentPhotos = [];
+
 loginBtn.addEventListener("click", loadPending);
+
+passInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    loadPending();
+  }
+});
 
 function previewUrl(url) {
   if (!url) return "";
   return url.replace("/upload/", "/upload/f_auto,q_auto,w_700/");
-}
-
-function escapeHtml(text) {
-  return String(text || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }
 
 async function readResponse(res) {
@@ -61,19 +60,36 @@ async function readResponse(res) {
   }
 }
 
+function setStatus(text) {
+  statusText.textContent = text;
+}
+
+function clearList() {
+  pendingList.innerHTML = "";
+}
+
+function updateCount() {
+  if (currentPhotos.length === 0) {
+    setStatus("暂无待审核照片。");
+  } else {
+    setStatus(`共有 ${currentPhotos.length} 张待审核照片。`);
+  }
+}
+
 async function loadPending() {
   const pass = passInput.value.trim();
 
   if (!pass) {
-    statusText.textContent = "请先输入密码。";
+    setStatus("请先输入密码。");
+    clearList();
     return;
   }
 
   try {
-    statusText.textContent = "正在加载待审核照片...";
-    pendingList.innerHTML = "";
+    setStatus("正在加载待审核照片...");
+    clearList();
 
-    const res = await fetch("/.netlify/functions/list-pending", {
+    const res = await fetch("/.netlify/functions/list-pending?t=" + Date.now(), {
       method: "GET",
       headers: {
         "x-admin-pass": pass
@@ -87,76 +103,109 @@ async function loadPending() {
       throw new Error(data.error || `加载失败，状态码：${res.status}`);
     }
 
-    const photos = Array.isArray(data) ? data : [];
+    currentPhotos = Array.isArray(data) ? data : [];
 
-    if (photos.length === 0) {
-      statusText.textContent = "暂无待审核照片。";
+    if (currentPhotos.length === 0) {
+      updateCount();
       return;
     }
 
-    statusText.textContent = `共有 ${photos.length} 张待审核照片。`;
-
-    photos.forEach((photo) => {
-      const card = document.createElement("div");
-      card.className = "pending-card";
-
-      const img = document.createElement("img");
-      img.src = previewUrl(photo.secure_url);
-      img.alt = "待审核照片";
-
-      const info = document.createElement("div");
-      info.className = "pending-info";
-
-      const name = document.createElement("strong");
-      name.textContent = photo.name || "匿名";
-
-      const message = document.createElement("p");
-      message.textContent = photo.message || "";
-
-      const time = document.createElement("p");
-      time.className = "upload-tip";
-      time.textContent = photo.created_at
-        ? new Date(photo.created_at).toLocaleString()
-        : "未知时间";
-
-      const actions = document.createElement("div");
-      actions.className = "admin-actions";
-
-      const approveBtn = document.createElement("button");
-      approveBtn.type = "button";
-      approveBtn.textContent = "通过";
-      approveBtn.addEventListener("click", () => {
-        reviewPhoto(photo.id, "approve");
-      });
-
-      const rejectBtn = document.createElement("button");
-      rejectBtn.type = "button";
-      rejectBtn.className = "danger";
-      rejectBtn.textContent = "拒绝";
-      rejectBtn.addEventListener("click", () => {
-        reviewPhoto(photo.id, "reject");
-      });
-
-      actions.appendChild(approveBtn);
-      actions.appendChild(rejectBtn);
-
-      info.appendChild(name);
-      info.appendChild(message);
-      info.appendChild(time);
-      info.appendChild(actions);
-
-      card.appendChild(img);
-      card.appendChild(info);
-
-      pendingList.appendChild(card);
-    });
+    renderPendingList();
+    updateCount();
   } catch (err) {
     console.error("loadPending error:", err);
-    statusText.textContent = "密码错误或加载失败：" + err.message;
+    setStatus("密码错误或加载失败：" + err.message);
+    clearList();
   }
 }
 
-async function reviewPhoto(id, action) {
+function renderPendingList() {
+  clearList();
+
+  currentPhotos.forEach(function (photo) {
+    const card = document.createElement("div");
+    card.className = "pending-card";
+    card.dataset.id = photo.id;
+
+    const img = document.createElement("img");
+    img.src = previewUrl(photo.secure_url);
+    img.alt = "待审核照片";
+
+    const info = document.createElement("div");
+    info.className = "pending-info";
+
+    const name = document.createElement("strong");
+    name.textContent = photo.name || "匿名";
+
+    const message = document.createElement("p");
+    message.textContent = photo.message || "";
+
+    const time = document.createElement("p");
+    time.className = "upload-tip";
+    time.textContent = photo.created_at
+      ? new Date(photo.created_at).toLocaleString()
+      : "未知时间";
+
+    const actions = document.createElement("div");
+    actions.className = "admin-actions";
+
+    const approveBtn = document.createElement("button");
+    approveBtn.type = "button";
+    approveBtn.textContent = "通过";
+    approveBtn.addEventListener("click", function () {
+      reviewPhoto(photo.id, "approve", card);
+    });
+
+    const rejectBtn = document.createElement("button");
+    rejectBtn.type = "button";
+    rejectBtn.className = "danger";
+    rejectBtn.textContent = "拒绝";
+    rejectBtn.addEventListener("click", function () {
+      reviewPhoto(photo.id, "reject", card);
+    });
+
+    actions.appendChild(approveBtn);
+    actions.appendChild(rejectBtn);
+
+    info.appendChild(name);
+    info.appendChild(message);
+    info.appendChild(time);
+    info.appendChild(actions);
+
+    card.appendChild(img);
+    card.appendChild(info);
+
+    pendingList.appendChild(card);
+  });
+}
+
+function disableCardButtons(card, disabled) {
+  if (!card) return;
+
+  const buttons = card.querySelectorAll("button");
+  buttons.forEach(function (btn) {
+    btn.disabled = disabled;
+  });
+}
+
+function removePhotoFromPage(id, card) {
+  currentPhotos = currentPhotos.filter(function (photo) {
+    return String(photo.id) !== String(id);
+  });
+
+  if (card && card.parentNode) {
+    card.parentNode.removeChild(card);
+  } else {
+    const oldCard = pendingList.querySelector(`[data-id="${CSS.escape(String(id))}"]`);
+    if (oldCard && oldCard.parentNode) {
+      oldCard.parentNode.removeChild(oldCard);
+    }
+  }
+
+  updateCount();
+}
+
+async function reviewPhoto(id, action, card) {
   const pass = passInput.value.trim();
 
   if (!pass) {
@@ -169,8 +218,19 @@ async function reviewPhoto(id, action) {
     return;
   }
 
+  const confirmText = action === "approve"
+    ? "确定通过这张照片吗？"
+    : "确定拒绝这张照片吗？";
+
+  if (!confirm(confirmText)) {
+    return;
+  }
+
   try {
-    const res = await fetch("/.netlify/functions/approve-photo", {
+    disableCardButtons(card, true);
+    setStatus(action === "approve" ? "正在通过照片..." : "正在拒绝照片...");
+
+    const res = await fetch("/.netlify/functions/approve-photo?t=" + Date.now(), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -189,10 +249,31 @@ async function reviewPhoto(id, action) {
       throw new Error(data.error || `操作失败，状态码：${res.status}`);
     }
 
-    alert(action === "approve" ? "审核通过。" : "已拒绝。");
-    await loadPending();
+    removePhotoFromPage(id, card);
+
+    if (action === "approve") {
+      alert("审核通过。");
+    } else {
+      alert("已拒绝。");
+    }
+
+    setTimeout(function () {
+      loadPending();
+    }, 300);
   } catch (err) {
     console.error("reviewPhoto error:", err);
+
+    if (err.message === "Photo not found") {
+      removePhotoFromPage(id, card);
+      alert("这张照片已经被处理过了，列表已刷新。");
+      setTimeout(function () {
+        loadPending();
+      }, 300);
+      return;
+    }
+
+    disableCardButtons(card, false);
+    setStatus("操作失败：" + err.message);
     alert("操作失败：" + err.message);
   }
 }
