@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上传毕业照</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="upload-page">
+  <section class="upload-card">
+    <p class="section-tag">Upload</p>
+    <h1>上传毕业照</h1>
+    <p class="upload-desc">照片会先进入待审核列表，审核通过后会自动出现在相册中。</p>
+
+    <form id="uploadForm" class="upload-form">
+      <label>
+        你的名字
+        <input type="text" id="uploaderName" placeholder="例如：刘涵" required>
+      </label>
+
+      <label>
+        照片说明
+        <textarea id="photoMessage" placeholder="可以写拍摄地点、说明或想说的话"></textarea>
+      </label>
+
+      <label>
+        选择照片
+        <input type="file" id="photoFile" accept="image/*" required>
+      </label>
+
+      <p class="upload-tip">建议一次上传 1 张照片。请确认照片适合公开展示。</p>
+
+      <button type="submit" id="submitBtn">提交照片</button>
+    </form>
+
+    <p id="uploadStatus" class="upload-tip"></p>
+
+    <a class="back-link" href="index.html">返回相册首页</a>
+  </section>
+</main>
+
+<script>
+const CLOUD_NAME = "das4hfmdx";
+const UPLOAD_PRESET = "graduation_upload";
+
+const form = document.getElementById("uploadForm");
+const statusText = document.getElementById("uploadStatus");
+const submitBtn = document.getElementById("submitBtn");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const file = document.getElementById("photoFile").files[0];
+  const name = document.getElementById("uploaderName").value.trim();
+  const message = document.getElementById("photoMessage").value.trim();
+
+  if (!file || !name) {
+    statusText.textContent = "请填写名字并选择照片。";
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "上传中...";
+  statusText.textContent = "正在上传到图片服务器，请稍等。";
+
+  try {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", UPLOAD_PRESET);
+
+    const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+      method: "POST",
+      body: data
+    });
+
+    if (!cloudRes.ok) {
+      throw new Error("Cloudinary 上传失败");
+    }
+
+    const cloudData = await cloudRes.json();
+
+    statusText.textContent = "上传成功，正在提交审核。";
+
+    const saveRes = await fetch("/.netlify/functions/submit-photo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name,
+        message,
+        public_id: cloudData.public_id,
+        secure_url: cloudData.secure_url,
+        width: cloudData.width,
+        height: cloudData.height,
+        format: cloudData.format
+      })
+    });
+
+    if (!saveRes.ok) {
+      throw new Error("提交审核失败");
+    }
+
+    statusText.textContent = "提交成功！等待审核通过后会出现在相册中。";
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    statusText.textContent = "上传失败，请稍后再试。";
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "提交照片";
+  }
+});
+</script>
+
+</body>
+</html>

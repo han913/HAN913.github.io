@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>照片审核后台</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="upload-page">
+  <section class="admin-card">
+    <p class="section-tag">Admin</p>
+    <h1>照片审核后台</h1>
+    <p class="upload-desc">输入后台密码后，可以审核同学上传的毕业照。</p>
+
+    <div class="admin-login">
+      <input type="password" id="adminPass" placeholder="输入审核密码">
+      <button onclick="loadPending()">进入后台</button>
+    </div>
+
+    <p id="adminStatus" class="upload-tip"></p>
+
+    <div id="pendingList" class="pending-list"></div>
+
+    <a class="back-link" href="index.html">返回相册首页</a>
+  </section>
+</main>
+
+<script>
+const passInput = document.getElementById("adminPass");
+const statusText = document.getElementById("adminStatus");
+const pendingList = document.getElementById("pendingList");
+
+function previewUrl(url) {
+  return url.replace("/upload/", "/upload/f_auto,q_auto,w_700/");
+}
+
+async function loadPending() {
+  const pass = passInput.value.trim();
+  if (!pass) {
+    statusText.textContent = "请先输入密码。";
+    return;
+  }
+
+  statusText.textContent = "正在加载待审核照片...";
+  pendingList.innerHTML = "";
+
+  const res = await fetch("/.netlify/functions/list-pending", {
+    headers: {
+      "x-admin-pass": pass
+    }
+  });
+
+  if (!res.ok) {
+    statusText.textContent = "密码错误或加载失败。";
+    return;
+  }
+
+  const photos = await res.json();
+
+  if (photos.length === 0) {
+    statusText.textContent = "暂无待审核照片。";
+    return;
+  }
+
+  statusText.textContent = `共有 ${photos.length} 张待审核照片。`;
+
+  photos.forEach(photo => {
+    const card = document.createElement("div");
+    card.className = "pending-card";
+
+    card.innerHTML = `
+      <img src="${previewUrl(photo.secure_url)}" alt="待审核照片">
+      <div class="pending-info">
+        <strong>${photo.name || "匿名"}</strong>
+        <p>${photo.message || ""}</p>
+        <p class="upload-tip">${new Date(photo.created_at).toLocaleString()}</p>
+        <div class="admin-actions">
+          <button onclick="reviewPhoto('${photo.id}', 'approve')">通过</button>
+          <button class="danger" onclick="reviewPhoto('${photo.id}', 'reject')">拒绝</button>
+        </div>
+      </div>
+    `;
+
+    pendingList.appendChild(card);
+  });
+}
+
+async function reviewPhoto(id, action) {
+  const pass = passInput.value.trim();
+
+  const res = await fetch("/.netlify/functions/approve-photo", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-admin-pass": pass
+    },
+    body: JSON.stringify({ id, action })
+  });
+
+  if (!res.ok) {
+    alert("操作失败");
+    return;
+  }
+
+  await loadPending();
+}
+</script>
+
+</body>
+</html>

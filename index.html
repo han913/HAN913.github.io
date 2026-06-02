@@ -22,6 +22,7 @@
       <h1>毕业纪念相册</h1>
       <p class="subtitle">把青春留在镜头里，把这一刻留给未来。</p>
       <a href="#gallery" class="hero-button">进入相册</a>
+      <a href="upload.html" class="hero-button">上传照片</a>
     </div>
   </header>
 
@@ -193,7 +194,48 @@
         <img src="photos_v2/thumb/DSC5052_thumb.webp" data-preview="photos_v2/large/DSC5052_large.webp" data-original="images/DSC5052.JPG" alt="毕业照40" loading="lazy" decoding="async">
       </figure>
 
+      <script>
+async function loadApprovedPhotos() {
+  const box = document.getElementById("approvedGallery");
+  if (!box) return;
+
+  const res = await fetch("/.netlify/functions/list-approved");
+  const photos = await res.json();
+
+  box.innerHTML = "";
+
+  photos.forEach(photo => {
+    const thumb = photo.secure_url.replace("/upload/", "/upload/f_auto,q_auto,w_600/");
+    const preview = photo.secure_url.replace("/upload/", "/upload/f_auto,q_auto,w_1800/");
+    const download = photo.secure_url.replace("/upload/", "/upload/fl_attachment/");
+
+    const figure = document.createElement("figure");
+    figure.innerHTML = `
+      <img src="${thumb}" data-preview="${preview}" data-original="${download}" alt="投稿照片" loading="lazy" decoding="async">
+    `;
+
+    figure.querySelector("img").addEventListener("click", () => {
+      lightboxImg.src = preview;
+      downloadBtn.href = download;
+      downloadBtn.setAttribute("download", "photo.jpg");
+      lightbox.classList.add("show");
+      document.body.style.overflow = "hidden";
+    });
+
+    box.appendChild(figure);
+  });
+}
+
+loadApprovedPhotos();
+</script>
     </section>
+    <section class="intro">
+  <p class="section-tag">Submissions</p>
+  <h2>同学投稿</h2>
+  <p>这里会显示审核通过后的投稿照片。</p>
+</section>
+
+<section class="gallery" id="approvedGallery"></section>
   </main>
 
   <div class="lightbox" id="lightbox">

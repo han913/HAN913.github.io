@@ -410,3 +410,151 @@ footer {
     border-radius: 12px;
   }
 }
+/* ===== 投稿与审核页面 ===== */
+
+.upload-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 42px 16px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 226, 190, 0.9), transparent 36%),
+    linear-gradient(135deg, #fff9f0 0%, #efe3d6 100%);
+}
+
+.upload-card,
+.admin-card {
+  width: 100%;
+  max-width: 720px;
+  padding: 34px 26px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 24px 70px rgba(91, 67, 40, 0.2);
+  text-align: center;
+}
+
+.upload-card h1,
+.admin-card h1 {
+  margin: 0 0 14px;
+  font-size: 34px;
+  color: #2d261f;
+}
+
+.upload-desc {
+  color: #6c6258;
+  line-height: 1.8;
+  margin-bottom: 26px;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.upload-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 700;
+  color: #3a3128;
+}
+
+.upload-form input,
+.upload-form textarea,
+.admin-login input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(120, 90, 60, 0.22);
+  border-radius: 14px;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.9);
+  outline: none;
+}
+
+.upload-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.upload-form button,
+.admin-login button,
+.admin-actions button {
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 999px;
+  color: #33251a;
+  background: linear-gradient(135deg, #fff2c9, #ffd69b);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.upload-tip {
+  margin: 0;
+  color: #8a7a69;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 24px;
+  color: #8b5a2b;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.admin-login {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.pending-list {
+  display: grid;
+  gap: 18px;
+}
+
+.pending-card {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 16px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: left;
+}
+
+.pending-card img {
+  width: 160px;
+  border-radius: 14px;
+}
+
+.pending-info p {
+  color: #6c6258;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-actions .danger {
+  background: #ffd1d1;
+}
+
+@media (max-width: 768px) {
+  .admin-login {
+    flex-direction: column;
+  }
+
+  .pending-card {
+    grid-template-columns: 1fr;
+  }
+
+  .pending-card img {
+    width: 100%;
+  }
+}
