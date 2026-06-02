@@ -1,142 +1,190 @@
 # 毕业纪念相册网站
 
-这是一个用于展示毕业照的静态网页项目，基于 HTML、CSS 和 JavaScript 编写，部署于 GitHub Pages，并可通过 Netlify 进行二次部署。网站主要用于存放和展示毕业照片，支持缩略图快速浏览、点击放大预览以及下载原始图片。
+这是一个用于展示毕业照片的静态相册网站，支持照片浏览、放大预览、原图下载、同学投稿、后台审核和已通过投稿删除。项目页面部署在 Netlify，图片上传使用 Cloudinary，投稿审核数据使用 Netlify Blobs 保存。
 
-## 项目介绍
+## 功能介绍
 
-本项目用于搭建一个简洁、美观、适合手机端和电脑端访问的毕业纪念相册网站。网页采用响应式布局设计，在电脑端以瀑布流形式展示照片，在手机端自动适配为更适合浏览的单列布局。图片经过压缩处理后用于网页加载，减少访问等待时间，同时保留原始图片用于下载。
+### 1. 毕业相册展示
 
-## 主要功能
+首页展示已有毕业照片，页面加载时使用压缩后的缩略图，点击照片后可以打开大图预览，并支持下载原图。
 
-* 毕业照在线展示
-* 响应式页面布局
-* 手机端 UI 适配
-* 图片懒加载
-* 缩略图快速预览
-* 点击图片放大查看
-* 下载原始大小图片
-* 支持 GitHub Pages 部署
-* 支持 Netlify 部署
+### 2. 同学照片投稿
+
+用户可以通过 `upload.html` 上传照片，并填写姓名和留言。上传后的照片不会直接显示在首页，而是进入待审核列表。
+
+### 3. 后台照片审核
+
+管理员通过 `admin.html` 输入后台密码后，可以查看待审核照片，并进行：
+
+* 通过：照片进入已通过列表，并显示在首页“同学投稿”区域
+* 拒绝：照片从待审核列表移除，不显示在首页
+
+### 4. 已通过投稿管理
+
+后台支持查看已经审核通过的投稿照片，并可以将不需要展示的照片从网站列表中删除。
+
+注意：删除已通过投稿只会从网站展示列表中移除记录，不会删除 Cloudinary 中的原始图片文件。
 
 ## 项目结构
 
 ```text
 HAN913.github.io/
-├── index.html              # 网站首页
-├── style.css               # 页面样式
-├── optimize_images.py      # 图片压缩与页面自动生成脚本
-├── images/                 # 原始毕业照片
-├── photos_v2/
-│   ├── thumb/              # 网页缩略图
-│   └── large/              # 网页预览大图
-└── README.md               # 项目说明文件
+├── index.html                  # 相册首页
+├── upload.html                 # 照片上传页面
+├── admin.html                  # 照片审核后台
+├── style.css                   # 页面样式
+├── package.json                # Node 依赖配置
+├── package-lock.json
+├── photos_v2/                  # 已有照片的缩略图和大图
+├── images/                     # 已有照片原图
+└── netlify/
+    └── functions/
+        ├── submit-photo.js     # 投稿保存接口
+        ├── list-pending.js     # 获取待审核照片
+        ├── approve-photo.js    # 审核通过/拒绝接口
+        ├── list-approved.js    # 获取已通过照片
+        └── delete-approved.js  # 删除已通过投稿记录
 ```
 
-## 使用方法
+## 技术栈
 
-### 1. 添加新照片
+* HTML
+* CSS
+* JavaScript
+* Netlify
+* Netlify Functions
+* Netlify Blobs
+* Cloudinary
 
-将新的原始照片复制到 `images` 文件夹中。
+## 本地依赖
 
-建议图片命名使用英文、数字或下划线，避免中文、空格和特殊符号。例如：
+项目使用 `@netlify/blobs` 保存待审核和已通过投稿数据。
+
+安装依赖：
+
+```bash
+npm install
+```
+
+如果依赖缺失，可以单独安装：
+
+```bash
+npm install @netlify/blobs
+```
+
+## Netlify 环境变量
+
+后台审核密码通过 Netlify 环境变量配置。
+
+需要在 Netlify 项目后台添加：
 
 ```text
-DSC5001.JPG
-DSC5002.JPG
+ADMIN_PASS=你的后台审核密码
 ```
 
-如果照片文件名前面带有 `_`，可以在 PowerShell 中执行以下命令去掉开头的下划线：
-
-```powershell
-Get-ChildItem .\images\_*.JPG | ForEach-Object {
-    $newName = $_.Name.TrimStart('_')
-    $target = Join-Path $_.DirectoryName $newName
-
-    if (Test-Path $target) {
-        Write-Host "跳过：$($_.Name)，因为 $newName 已存在"
-    } else {
-        Rename-Item $_.FullName -NewName $newName
-        Write-Host "已改名：$($_.Name) -> $newName"
-    }
-}
-```
-
-### 2. 生成压缩图片和网页内容
-
-运行图片处理脚本：
-
-```powershell
-python optimize_images.py
-```
-
-脚本会自动完成以下操作：
-
-* 读取 `images` 文件夹中的原始照片
-* 生成网页缩略图到 `photos_v2/thumb`
-* 生成网页预览图到 `photos_v2/large`
-* 自动更新 `index.html` 中的照片列表
-
-### 3. 提交并上传到 GitHub
-
-```powershell
-git add images photos_v2 index.html style.css optimize_images.py README.md
-git commit -m "更新毕业照相册"
-git pull --rebase origin main
-git push origin main
-```
-
-上传完成后，GitHub Pages 会自动更新网站。
-
-## 图片说明
-
-本项目采用三类图片：
+建议设置为：
 
 ```text
-images/        原始图片，用于下载
-photos_v2/thumb/   缩略图，用于页面快速加载
-photos_v2/large/   预览图，用于点击放大查看
+Same value for all deploy contexts
 ```
 
-这样可以避免网页直接加载原始大图，提高访问速度，同时保留高清原图下载功能。
+并确保作用范围包含 Functions。
+
+修改环境变量后，需要重新部署 Netlify：
+
+```text
+Deploys → Trigger deploy → Deploy site
+```
+
+## Cloudinary 配置
+
+照片上传使用 Cloudinary。
+
+当前上传页面需要配置：
+
+```text
+Cloud name
+Upload preset
+```
+
+如果更换 Cloudinary 账号或上传预设，需要在 `upload.html` 中修改对应配置。
+
+投稿流程为：
+
+```text
+用户上传图片 → Cloudinary 保存图片 → submit-photo 写入 pending → 管理员审核 → approve-photo 移入 approved → 首页显示
+```
 
 ## 部署方式
 
-### GitHub Pages
+项目通过 GitHub 推送后，由 Netlify 自动部署。
 
-本项目可直接通过 GitHub Pages 部署。仓库名为：
+常用提交命令：
 
-```text
-HAN913.github.io
+```bash
+git add .
+git commit -m "更新网站功能"
+git push origin main
 ```
 
-部署后可通过以下地址访问：
+Netlify 部署完成后，访问：
 
 ```text
-https://HAN913.github.io
+https://你的站点域名/
 ```
 
-### Netlify
-
-也可以在 Netlify 中导入该 GitHub 仓库进行部署。
-
-部署设置：
+后台审核页面：
 
 ```text
-Build command：留空
-Publish directory：/
+https://你的站点域名/admin.html
 ```
 
-部署成功后，可以使用 Netlify 提供的 `.netlify.app` 地址访问网站，也可以绑定自定义域名。
+上传页面：
 
-## 注意事项
+```text
+https://你的站点域名/upload.html
+```
 
-* 不建议一次上传过多原始照片，容易导致 Git push 速度慢或失败
-* 建议每次新增 10～20 张照片后提交一次
-* 原始照片较大时，网页加载应使用压缩后的缩略图
-* 如果竖版照片方向异常，可在 `optimize_images.py` 中设置手动旋转
-* 修改网页样式时主要编辑 `style.css`
-* 添加照片后主要运行 `optimize_images.py`，不需要手动逐张修改 HTML
+## 常见问题
 
-## 项目用途
+### 1. 后台提示密码错误或加载失败
 
-该网站主要用于毕业照片展示和纪念，可作为班级、个人或团队毕业相册页面使用，方便同学通过网页浏览照片并下载原图保存。
+检查 Netlify 环境变量是否正确：
+
+```text
+Key 必须是 ADMIN_PASS
+```
+
+如果刚修改过密码，需要重新部署 Netlify。
+
+### 2. 上传后没有出现在首页
+
+上传后的照片需要先进入后台审核，通过后才会显示在首页。
+
+### 3. 审核通过后首页不显示
+
+检查以下接口是否有数据：
+
+```text
+/.netlify/functions/list-approved
+```
+
+如果接口有数据但首页不显示，通常是 `index.html` 没有正确加载 `list-approved`。
+
+### 4. 删除已通过照片后 Cloudinary 里还存在
+
+这是正常的。后台删除功能只删除网站展示记录，不删除 Cloudinary 原始文件。
+
+### 5. Netlify 显示 Plugin Error
+
+如果提示 21YunBox 插件错误，但网站状态仍然是 Published，通常不影响 Netlify 网站和 Functions 使用。该插件错误只与额外的中国 CDN 部署有关。
+
+## 后续可优化方向
+
+* 增加投稿照片标题和留言展示样式
+* 给后台增加分页
+* 增加 Cloudinary 原图删除接口
+* 增加上传大小限制提示
+* 增加审核操作日志
+* 给后台页面增加更明显的状态提示
+* 给首页投稿照片增加瀑布流布局
