@@ -1,0 +1,15 @@
+{
+  "name": "han913.github.io",
+  "version": "1.0.0",
+  "description": "这是一个用于展示毕业照的静态网页项目，基于 HTML、CSS 和 JavaScript 编写，部署于 GitHub Pages，并可通过 Netlify 进行二次部署。网站主要用于存放和展示毕业照片，支持缩略图快速浏览、点击放大预览以及下载原始图片。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@netlify/blobs": "^10.7.9"
+  }
+}
