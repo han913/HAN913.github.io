@@ -8,8 +8,53 @@
   <style>
     .hero {
       background-image:
-        linear-gradient(135deg, rgba(18, 18, 18, 0.72), rgba(18, 18, 18, 0.22)),
-        url("photos_v2/large/DSC4817_large.webp");
+        linear-gradient(135deg, rgba(18, 18, 18, 0.72), rgba(18, 18, 18, 0.24)),
+        url("photos_v2/cover/cover_pc.webp");
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        background-image:
+          linear-gradient(135deg, rgba(18, 18, 18, 0.72), rgba(18, 18, 18, 0.24)),
+          url("photos_v2/cover/cover_mobile.webp");
+      }
+    }
+
+    .gallery-toolbar {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .load-more-btn {
+      min-width: 180px;
+      height: 46px;
+      padding: 0 24px;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      color: #3a2c1d;
+      background: #ffd891;
+      box-shadow: 0 12px 30px rgba(70, 45, 20, 0.14);
+    }
+
+    .load-more-btn:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+    }
+
+    .gallery figure {
+      background: #f6efe4;
+    }
+
+    .gallery figure img {
+      width: 100%;
+      height: auto;
+      display: block;
     }
   </style>
 </head>
@@ -29,323 +74,14 @@
     <section class="intro">
       <p class="section-tag">Photos</p>
       <h2>我们的毕业瞬间</h2>
-      <p>点击照片可以放大查看，预览图经过压缩以提升加载速度；如需保存高清版本，可在预览界面下载原始图片。</p>
+      <p>页面会先加载一部分照片，继续浏览时可点击加载更多；点击照片可查看预览图并下载原始图片。</p>
     </section>
 
-    <section class="gallery" id="gallery">
-      <figure>
-        <img src="photos_v2/thumb/DSC4817_thumb.webp" data-preview="photos_v2/large/DSC4817_large.webp" data-original="images/DSC4817.JPG" alt="毕业照1" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4831_thumb.webp" data-preview="photos_v2/large/DSC4831_large.webp" data-original="images/DSC4831.JPG" alt="毕业照2" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4835_thumb.webp" data-preview="photos_v2/large/DSC4835_large.webp" data-original="images/DSC4835.JPG" alt="毕业照3" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4841_thumb.webp" data-preview="photos_v2/large/DSC4841_large.webp" data-original="images/DSC4841.JPG" alt="毕业照4" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4844_thumb.webp" data-preview="photos_v2/large/DSC4844_large.webp" data-original="images/DSC4844.JPG" alt="毕业照5" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4852_thumb.webp" data-preview="photos_v2/large/DSC4852_large.webp" data-original="images/DSC4852.JPG" alt="毕业照6" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4853_thumb.webp" data-preview="photos_v2/large/DSC4853_large.webp" data-original="images/DSC4853.JPG" alt="毕业照7" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4854_thumb.webp" data-preview="photos_v2/large/DSC4854_large.webp" data-original="images/DSC4854.JPG" alt="毕业照8" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4857_thumb.webp" data-preview="photos_v2/large/DSC4857_large.webp" data-original="images/DSC4857.JPG" alt="毕业照9" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4858_thumb.webp" data-preview="photos_v2/large/DSC4858_large.webp" data-original="images/DSC4858.JPG" alt="毕业照10" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4861_thumb.webp" data-preview="photos_v2/large/DSC4861_large.webp" data-original="images/DSC4861.JPG" alt="毕业照11" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4862_thumb.webp" data-preview="photos_v2/large/DSC4862_large.webp" data-original="images/DSC4862.JPG" alt="毕业照12" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4863_thumb.webp" data-preview="photos_v2/large/DSC4863_large.webp" data-original="images/DSC4863.JPG" alt="毕业照13" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4864_thumb.webp" data-preview="photos_v2/large/DSC4864_large.webp" data-original="images/DSC4864.JPG" alt="毕业照14" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4866_thumb.webp" data-preview="photos_v2/large/DSC4866_large.webp" data-original="images/DSC4866.JPG" alt="毕业照15" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4868_thumb.webp" data-preview="photos_v2/large/DSC4868_large.webp" data-original="images/DSC4868.JPG" alt="毕业照16" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4869_thumb.webp" data-preview="photos_v2/large/DSC4869_large.webp" data-original="images/DSC4869.JPG" alt="毕业照17" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4872_thumb.webp" data-preview="photos_v2/large/DSC4872_large.webp" data-original="images/DSC4872.JPG" alt="毕业照18" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4873_thumb.webp" data-preview="photos_v2/large/DSC4873_large.webp" data-original="images/DSC4873.JPG" alt="毕业照19" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4874_thumb.webp" data-preview="photos_v2/large/DSC4874_large.webp" data-original="images/DSC4874.JPG" alt="毕业照20" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4880_thumb.webp" data-preview="photos_v2/large/DSC4880_large.webp" data-original="images/DSC4880.JPG" alt="毕业照21" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4892_thumb.webp" data-preview="photos_v2/large/DSC4892_large.webp" data-original="images/DSC4892.JPG" alt="毕业照22" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4893_thumb.webp" data-preview="photos_v2/large/DSC4893_large.webp" data-original="images/DSC4893.JPG" alt="毕业照23" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4897_thumb.webp" data-preview="photos_v2/large/DSC4897_large.webp" data-original="images/DSC4897.JPG" alt="毕业照24" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4899_thumb.webp" data-preview="photos_v2/large/DSC4899_large.webp" data-original="images/DSC4899.JPG" alt="毕业照25" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4902_thumb.webp" data-preview="photos_v2/large/DSC4902_large.webp" data-original="images/DSC4902.JPG" alt="毕业照26" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4915_thumb.webp" data-preview="photos_v2/large/DSC4915_large.webp" data-original="images/DSC4915.JPG" alt="毕业照27" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4925_thumb.webp" data-preview="photos_v2/large/DSC4925_large.webp" data-original="images/DSC4925.JPG" alt="毕业照28" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4926_thumb.webp" data-preview="photos_v2/large/DSC4926_large.webp" data-original="images/DSC4926.JPG" alt="毕业照29" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4927_thumb.webp" data-preview="photos_v2/large/DSC4927_large.webp" data-original="images/DSC4927.JPG" alt="毕业照30" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4981_thumb.webp" data-preview="photos_v2/large/DSC4981_large.webp" data-original="images/DSC4981.JPG" alt="毕业照31" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC4996_thumb.webp" data-preview="photos_v2/large/DSC4996_large.webp" data-original="images/DSC4996.JPG" alt="毕业照32" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5005_thumb.webp" data-preview="photos_v2/large/DSC5005_large.webp" data-original="images/DSC5005.JPG" alt="毕业照33" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5009_thumb.webp" data-preview="photos_v2/large/DSC5009_large.webp" data-original="images/DSC5009.JPG" alt="毕业照34" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5010_thumb.webp" data-preview="photos_v2/large/DSC5010_large.webp" data-original="images/DSC5010.JPG" alt="毕业照35" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5011_thumb.webp" data-preview="photos_v2/large/DSC5011_large.webp" data-original="images/DSC5011.JPG" alt="毕业照36" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5015_thumb.webp" data-preview="photos_v2/large/DSC5015_large.webp" data-original="images/DSC5015.JPG" alt="毕业照37" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5020_thumb.webp" data-preview="photos_v2/large/DSC5020_large.webp" data-original="images/DSC5020.JPG" alt="毕业照38" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5050_thumb.webp" data-preview="photos_v2/large/DSC5050_large.webp" data-original="images/DSC5050.JPG" alt="毕业照39" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC5052_thumb.webp" data-preview="photos_v2/large/DSC5052_large.webp" data-original="images/DSC5052.JPG" alt="毕业照40" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5095_thumb.webp" data-preview="photos_v2/large/DSC_5095_large.webp" data-original="images/DSC_5095.JPG" alt="毕业照41" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5097_thumb.webp" data-preview="photos_v2/large/DSC_5097_large.webp" data-original="images/DSC_5097.JPG" alt="毕业照42" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5109_thumb.webp" data-preview="photos_v2/large/DSC_5109_large.webp" data-original="images/DSC_5109.JPG" alt="毕业照43" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5121_thumb.webp" data-preview="photos_v2/large/DSC_5121_large.webp" data-original="images/DSC_5121.JPG" alt="毕业照44" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5130_thumb.webp" data-preview="photos_v2/large/DSC_5130_large.webp" data-original="images/DSC_5130.JPG" alt="毕业照45" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5133_thumb.webp" data-preview="photos_v2/large/DSC_5133_large.webp" data-original="images/DSC_5133.JPG" alt="毕业照46" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5134_thumb.webp" data-preview="photos_v2/large/DSC_5134_large.webp" data-original="images/DSC_5134.JPG" alt="毕业照47" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5135_thumb.webp" data-preview="photos_v2/large/DSC_5135_large.webp" data-original="images/DSC_5135.JPG" alt="毕业照48" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5140_thumb.webp" data-preview="photos_v2/large/DSC_5140_large.webp" data-original="images/DSC_5140.JPG" alt="毕业照49" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5143_thumb.webp" data-preview="photos_v2/large/DSC_5143_large.webp" data-original="images/DSC_5143.JPG" alt="毕业照50" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5144_thumb.webp" data-preview="photos_v2/large/DSC_5144_large.webp" data-original="images/DSC_5144.JPG" alt="毕业照51" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5146_thumb.webp" data-preview="photos_v2/large/DSC_5146_large.webp" data-original="images/DSC_5146.JPG" alt="毕业照52" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5147_thumb.webp" data-preview="photos_v2/large/DSC_5147_large.webp" data-original="images/DSC_5147.JPG" alt="毕业照53" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5149_thumb.webp" data-preview="photos_v2/large/DSC_5149_large.webp" data-original="images/DSC_5149.JPG" alt="毕业照54" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5178_thumb.webp" data-preview="photos_v2/large/DSC_5178_large.webp" data-original="images/DSC_5178.JPG" alt="毕业照55" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5179_thumb.webp" data-preview="photos_v2/large/DSC_5179_large.webp" data-original="images/DSC_5179.JPG" alt="毕业照56" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5180_thumb.webp" data-preview="photos_v2/large/DSC_5180_large.webp" data-original="images/DSC_5180.JPG" alt="毕业照57" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5181_thumb.webp" data-preview="photos_v2/large/DSC_5181_large.webp" data-original="images/DSC_5181.JPG" alt="毕业照58" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5182_thumb.webp" data-preview="photos_v2/large/DSC_5182_large.webp" data-original="images/DSC_5182.JPG" alt="毕业照59" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5183_thumb.webp" data-preview="photos_v2/large/DSC_5183_large.webp" data-original="images/DSC_5183.JPG" alt="毕业照60" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5187_thumb.webp" data-preview="photos_v2/large/DSC_5187_large.webp" data-original="images/DSC_5187.JPG" alt="毕业照61" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5188_thumb.webp" data-preview="photos_v2/large/DSC_5188_large.webp" data-original="images/DSC_5188.JPG" alt="毕业照62" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5189_thumb.webp" data-preview="photos_v2/large/DSC_5189_large.webp" data-original="images/DSC_5189.JPG" alt="毕业照63" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5190_thumb.webp" data-preview="photos_v2/large/DSC_5190_large.webp" data-original="images/DSC_5190.JPG" alt="毕业照64" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5194_thumb.webp" data-preview="photos_v2/large/DSC_5194_large.webp" data-original="images/DSC_5194.JPG" alt="毕业照65" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5195_thumb.webp" data-preview="photos_v2/large/DSC_5195_large.webp" data-original="images/DSC_5195.JPG" alt="毕业照66" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5196_thumb.webp" data-preview="photos_v2/large/DSC_5196_large.webp" data-original="images/DSC_5196.JPG" alt="毕业照67" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5210_thumb.webp" data-preview="photos_v2/large/DSC_5210_large.webp" data-original="images/DSC_5210.JPG" alt="毕业照68" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5226_thumb.webp" data-preview="photos_v2/large/DSC_5226_large.webp" data-original="images/DSC_5226.JPG" alt="毕业照69" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5234_thumb.webp" data-preview="photos_v2/large/DSC_5234_large.webp" data-original="images/DSC_5234.JPG" alt="毕业照70" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5244_thumb.webp" data-preview="photos_v2/large/DSC_5244_large.webp" data-original="images/DSC_5244.JPG" alt="毕业照71" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5250_thumb.webp" data-preview="photos_v2/large/DSC_5250_large.webp" data-original="images/DSC_5250.JPG" alt="毕业照72" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5252_thumb.webp" data-preview="photos_v2/large/DSC_5252_large.webp" data-original="images/DSC_5252.JPG" alt="毕业照73" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5257_thumb.webp" data-preview="photos_v2/large/DSC_5257_large.webp" data-original="images/DSC_5257.JPG" alt="毕业照74" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5258_thumb.webp" data-preview="photos_v2/large/DSC_5258_large.webp" data-original="images/DSC_5258.JPG" alt="毕业照75" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5265_thumb.webp" data-preview="photos_v2/large/DSC_5265_large.webp" data-original="images/DSC_5265.JPG" alt="毕业照76" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/DSC_5268_thumb.webp" data-preview="photos_v2/large/DSC_5268_large.webp" data-original="images/DSC_5268.JPG" alt="毕业照77" loading="lazy" decoding="async">
-      </figure>
-
-      <figure>
-        <img src="photos_v2/thumb/c8250c2acc30a3bf1aad32502d0ac21f_thumb.webp" data-preview="photos_v2/large/c8250c2acc30a3bf1aad32502d0ac21f_large.webp" data-original="images/c8250c2acc30a3bf1aad32502d0ac21f.png" alt="毕业照78" loading="lazy" decoding="async">
-      </figure>
-
-    </section>
+    <section class="gallery" id="gallery"></section>
+
+    <div class="gallery-toolbar">
+      <button id="loadMoreBtn" class="load-more-btn" type="button">加载更多照片</button>
+    </div>
   </main>
 
   <div class="lightbox" id="lightbox">
@@ -359,27 +95,72 @@
   </footer>
 
   <script>
-    const galleryImages = document.querySelectorAll('.gallery img');
+    const GALLERY_ITEMS = [{"title": "毕业照1", "thumb": "photos_v2/thumb/DSC4817_thumb.webp", "preview": "photos_v2/large/DSC4817_large.webp", "original": "images/DSC4817.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照2", "thumb": "photos_v2/thumb/DSC4831_thumb.webp", "preview": "photos_v2/large/DSC4831_large.webp", "original": "images/DSC4831.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照3", "thumb": "photos_v2/thumb/DSC4835_thumb.webp", "preview": "photos_v2/large/DSC4835_large.webp", "original": "images/DSC4835.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照4", "thumb": "photos_v2/thumb/DSC4841_thumb.webp", "preview": "photos_v2/large/DSC4841_large.webp", "original": "images/DSC4841.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照5", "thumb": "photos_v2/thumb/DSC4844_thumb.webp", "preview": "photos_v2/large/DSC4844_large.webp", "original": "images/DSC4844.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照6", "thumb": "photos_v2/thumb/DSC4852_thumb.webp", "preview": "photos_v2/large/DSC4852_large.webp", "original": "images/DSC4852.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照7", "thumb": "photos_v2/thumb/DSC4853_thumb.webp", "preview": "photos_v2/large/DSC4853_large.webp", "original": "images/DSC4853.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照8", "thumb": "photos_v2/thumb/DSC4854_thumb.webp", "preview": "photos_v2/large/DSC4854_large.webp", "original": "images/DSC4854.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照9", "thumb": "photos_v2/thumb/DSC4857_thumb.webp", "preview": "photos_v2/large/DSC4857_large.webp", "original": "images/DSC4857.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照10", "thumb": "photos_v2/thumb/DSC4858_thumb.webp", "preview": "photos_v2/large/DSC4858_large.webp", "original": "images/DSC4858.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照11", "thumb": "photos_v2/thumb/DSC4861_thumb.webp", "preview": "photos_v2/large/DSC4861_large.webp", "original": "images/DSC4861.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照12", "thumb": "photos_v2/thumb/DSC4862_thumb.webp", "preview": "photos_v2/large/DSC4862_large.webp", "original": "images/DSC4862.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照13", "thumb": "photos_v2/thumb/DSC4863_thumb.webp", "preview": "photos_v2/large/DSC4863_large.webp", "original": "images/DSC4863.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照14", "thumb": "photos_v2/thumb/DSC4864_thumb.webp", "preview": "photos_v2/large/DSC4864_large.webp", "original": "images/DSC4864.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照15", "thumb": "photos_v2/thumb/DSC4866_thumb.webp", "preview": "photos_v2/large/DSC4866_large.webp", "original": "images/DSC4866.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照16", "thumb": "photos_v2/thumb/DSC4868_thumb.webp", "preview": "photos_v2/large/DSC4868_large.webp", "original": "images/DSC4868.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照17", "thumb": "photos_v2/thumb/DSC4869_thumb.webp", "preview": "photos_v2/large/DSC4869_large.webp", "original": "images/DSC4869.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照18", "thumb": "photos_v2/thumb/DSC4872_thumb.webp", "preview": "photos_v2/large/DSC4872_large.webp", "original": "images/DSC4872.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照19", "thumb": "photos_v2/thumb/DSC4873_thumb.webp", "preview": "photos_v2/large/DSC4873_large.webp", "original": "images/DSC4873.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照20", "thumb": "photos_v2/thumb/DSC4874_thumb.webp", "preview": "photos_v2/large/DSC4874_large.webp", "original": "images/DSC4874.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照21", "thumb": "photos_v2/thumb/DSC4880_thumb.webp", "preview": "photos_v2/large/DSC4880_large.webp", "original": "images/DSC4880.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照22", "thumb": "photos_v2/thumb/DSC4892_thumb.webp", "preview": "photos_v2/large/DSC4892_large.webp", "original": "images/DSC4892.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照23", "thumb": "photos_v2/thumb/DSC4893_thumb.webp", "preview": "photos_v2/large/DSC4893_large.webp", "original": "images/DSC4893.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照24", "thumb": "photos_v2/thumb/DSC4897_thumb.webp", "preview": "photos_v2/large/DSC4897_large.webp", "original": "images/DSC4897.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照25", "thumb": "photos_v2/thumb/DSC4899_thumb.webp", "preview": "photos_v2/large/DSC4899_large.webp", "original": "images/DSC4899.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照26", "thumb": "photos_v2/thumb/DSC4902_thumb.webp", "preview": "photos_v2/large/DSC4902_large.webp", "original": "images/DSC4902.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照27", "thumb": "photos_v2/thumb/DSC4915_thumb.webp", "preview": "photos_v2/large/DSC4915_large.webp", "original": "images/DSC4915.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照28", "thumb": "photos_v2/thumb/DSC4925_thumb.webp", "preview": "photos_v2/large/DSC4925_large.webp", "original": "images/DSC4925.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照29", "thumb": "photos_v2/thumb/DSC4926_thumb.webp", "preview": "photos_v2/large/DSC4926_large.webp", "original": "images/DSC4926.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照30", "thumb": "photos_v2/thumb/DSC4927_thumb.webp", "preview": "photos_v2/large/DSC4927_large.webp", "original": "images/DSC4927.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照31", "thumb": "photos_v2/thumb/DSC4981_thumb.webp", "preview": "photos_v2/large/DSC4981_large.webp", "original": "images/DSC4981.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照32", "thumb": "photos_v2/thumb/DSC4996_thumb.webp", "preview": "photos_v2/large/DSC4996_large.webp", "original": "images/DSC4996.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照33", "thumb": "photos_v2/thumb/DSC5005_thumb.webp", "preview": "photos_v2/large/DSC5005_large.webp", "original": "images/DSC5005.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照34", "thumb": "photos_v2/thumb/DSC5009_thumb.webp", "preview": "photos_v2/large/DSC5009_large.webp", "original": "images/DSC5009.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照35", "thumb": "photos_v2/thumb/DSC5010_thumb.webp", "preview": "photos_v2/large/DSC5010_large.webp", "original": "images/DSC5010.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照36", "thumb": "photos_v2/thumb/DSC5011_thumb.webp", "preview": "photos_v2/large/DSC5011_large.webp", "original": "images/DSC5011.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照37", "thumb": "photos_v2/thumb/DSC5015_thumb.webp", "preview": "photos_v2/large/DSC5015_large.webp", "original": "images/DSC5015.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照38", "thumb": "photos_v2/thumb/DSC5020_thumb.webp", "preview": "photos_v2/large/DSC5020_large.webp", "original": "images/DSC5020.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照39", "thumb": "photos_v2/thumb/DSC5050_thumb.webp", "preview": "photos_v2/large/DSC5050_large.webp", "original": "images/DSC5050.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照40", "thumb": "photos_v2/thumb/DSC5052_thumb.webp", "preview": "photos_v2/large/DSC5052_large.webp", "original": "images/DSC5052.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照41", "thumb": "photos_v2/thumb/DSC_5095_thumb.webp", "preview": "photos_v2/large/DSC_5095_large.webp", "original": "images/DSC_5095.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照42", "thumb": "photos_v2/thumb/DSC_5097_thumb.webp", "preview": "photos_v2/large/DSC_5097_large.webp", "original": "images/DSC_5097.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照43", "thumb": "photos_v2/thumb/DSC_5109_thumb.webp", "preview": "photos_v2/large/DSC_5109_large.webp", "original": "images/DSC_5109.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照44", "thumb": "photos_v2/thumb/DSC_5121_thumb.webp", "preview": "photos_v2/large/DSC_5121_large.webp", "original": "images/DSC_5121.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照45", "thumb": "photos_v2/thumb/DSC_5130_thumb.webp", "preview": "photos_v2/large/DSC_5130_large.webp", "original": "images/DSC_5130.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照46", "thumb": "photos_v2/thumb/DSC_5133_thumb.webp", "preview": "photos_v2/large/DSC_5133_large.webp", "original": "images/DSC_5133.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照47", "thumb": "photos_v2/thumb/DSC_5134_thumb.webp", "preview": "photos_v2/large/DSC_5134_large.webp", "original": "images/DSC_5134.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照48", "thumb": "photos_v2/thumb/DSC_5135_thumb.webp", "preview": "photos_v2/large/DSC_5135_large.webp", "original": "images/DSC_5135.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照49", "thumb": "photos_v2/thumb/DSC_5140_thumb.webp", "preview": "photos_v2/large/DSC_5140_large.webp", "original": "images/DSC_5140.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照50", "thumb": "photos_v2/thumb/DSC_5143_thumb.webp", "preview": "photos_v2/large/DSC_5143_large.webp", "original": "images/DSC_5143.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照51", "thumb": "photos_v2/thumb/DSC_5144_thumb.webp", "preview": "photos_v2/large/DSC_5144_large.webp", "original": "images/DSC_5144.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照52", "thumb": "photos_v2/thumb/DSC_5146_thumb.webp", "preview": "photos_v2/large/DSC_5146_large.webp", "original": "images/DSC_5146.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照53", "thumb": "photos_v2/thumb/DSC_5147_thumb.webp", "preview": "photos_v2/large/DSC_5147_large.webp", "original": "images/DSC_5147.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照54", "thumb": "photos_v2/thumb/DSC_5149_thumb.webp", "preview": "photos_v2/large/DSC_5149_large.webp", "original": "images/DSC_5149.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照55", "thumb": "photos_v2/thumb/DSC_5178_thumb.webp", "preview": "photos_v2/large/DSC_5178_large.webp", "original": "images/DSC_5178.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照56", "thumb": "photos_v2/thumb/DSC_5179_thumb.webp", "preview": "photos_v2/large/DSC_5179_large.webp", "original": "images/DSC_5179.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照57", "thumb": "photos_v2/thumb/DSC_5180_thumb.webp", "preview": "photos_v2/large/DSC_5180_large.webp", "original": "images/DSC_5180.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照58", "thumb": "photos_v2/thumb/DSC_5181_thumb.webp", "preview": "photos_v2/large/DSC_5181_large.webp", "original": "images/DSC_5181.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照59", "thumb": "photos_v2/thumb/DSC_5182_thumb.webp", "preview": "photos_v2/large/DSC_5182_large.webp", "original": "images/DSC_5182.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照60", "thumb": "photos_v2/thumb/DSC_5183_thumb.webp", "preview": "photos_v2/large/DSC_5183_large.webp", "original": "images/DSC_5183.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照61", "thumb": "photos_v2/thumb/DSC_5187_thumb.webp", "preview": "photos_v2/large/DSC_5187_large.webp", "original": "images/DSC_5187.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照62", "thumb": "photos_v2/thumb/DSC_5188_thumb.webp", "preview": "photos_v2/large/DSC_5188_large.webp", "original": "images/DSC_5188.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照63", "thumb": "photos_v2/thumb/DSC_5189_thumb.webp", "preview": "photos_v2/large/DSC_5189_large.webp", "original": "images/DSC_5189.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照64", "thumb": "photos_v2/thumb/DSC_5190_thumb.webp", "preview": "photos_v2/large/DSC_5190_large.webp", "original": "images/DSC_5190.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照65", "thumb": "photos_v2/thumb/DSC_5194_thumb.webp", "preview": "photos_v2/large/DSC_5194_large.webp", "original": "images/DSC_5194.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照66", "thumb": "photos_v2/thumb/DSC_5195_thumb.webp", "preview": "photos_v2/large/DSC_5195_large.webp", "original": "images/DSC_5195.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照67", "thumb": "photos_v2/thumb/DSC_5196_thumb.webp", "preview": "photos_v2/large/DSC_5196_large.webp", "original": "images/DSC_5196.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照68", "thumb": "photos_v2/thumb/DSC_5210_thumb.webp", "preview": "photos_v2/large/DSC_5210_large.webp", "original": "images/DSC_5210.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照69", "thumb": "photos_v2/thumb/DSC_5226_thumb.webp", "preview": "photos_v2/large/DSC_5226_large.webp", "original": "images/DSC_5226.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照70", "thumb": "photos_v2/thumb/DSC_5234_thumb.webp", "preview": "photos_v2/large/DSC_5234_large.webp", "original": "images/DSC_5234.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照71", "thumb": "photos_v2/thumb/DSC_5244_thumb.webp", "preview": "photos_v2/large/DSC_5244_large.webp", "original": "images/DSC_5244.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照72", "thumb": "photos_v2/thumb/DSC_5250_thumb.webp", "preview": "photos_v2/large/DSC_5250_large.webp", "original": "images/DSC_5250.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照73", "thumb": "photos_v2/thumb/DSC_5252_thumb.webp", "preview": "photos_v2/large/DSC_5252_large.webp", "original": "images/DSC_5252.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照74", "thumb": "photos_v2/thumb/DSC_5257_thumb.webp", "preview": "photos_v2/large/DSC_5257_large.webp", "original": "images/DSC_5257.JPG", "orientation": "landscape", "w": 5568, "h": 3712}, {"title": "毕业照75", "thumb": "photos_v2/thumb/DSC_5258_thumb.webp", "preview": "photos_v2/large/DSC_5258_large.webp", "original": "images/DSC_5258.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照76", "thumb": "photos_v2/thumb/DSC_5265_thumb.webp", "preview": "photos_v2/large/DSC_5265_large.webp", "original": "images/DSC_5265.JPG", "orientation": "portrait", "w": 3712, "h": 5568}, {"title": "毕业照77", "thumb": "photos_v2/thumb/DSC_5268_thumb.webp", "preview": "photos_v2/large/DSC_5268_large.webp", "original": "images/DSC_5268.JPG", "orientation": "landscape", "w": 3600, "h": 2400}, {"title": "毕业照78", "thumb": "photos_v2/thumb/c8250c2acc30a3bf1aad32502d0ac21f_thumb.webp", "preview": "photos_v2/large/c8250c2acc30a3bf1aad32502d0ac21f_large.webp", "original": "images/c8250c2acc30a3bf1aad32502d0ac21f.png", "orientation": "portrait", "w": 1024, "h": 1536}];
+
+    const INITIAL_COUNT = 24;
+    const LOAD_MORE_COUNT = 18;
+
+    const gallery = document.getElementById('gallery');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightboxImg');
     const closeBtn = document.getElementById('closeBtn');
     const downloadBtn = document.getElementById('downloadBtn');
 
-    galleryImages.forEach(img => {
-      img.addEventListener('click', () => {
-        lightboxImg.src = img.dataset.preview;
-        downloadBtn.href = img.dataset.original;
-        downloadBtn.setAttribute('download', img.dataset.original.split('/').pop());
-        lightbox.classList.add('show');
-        document.body.style.overflow = 'hidden';
-      });
-    });
+    let renderedCount = 0;
+
+    function openLightbox(previewUrl, originalUrl, filename) {
+      lightboxImg.src = previewUrl;
+      downloadBtn.href = originalUrl;
+      downloadBtn.setAttribute('download', filename || 'photo.jpg');
+      lightbox.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
 
     function closeLightbox() {
       lightbox.classList.remove('show');
       lightboxImg.src = '';
       downloadBtn.href = '';
       document.body.style.overflow = '';
+    }
+
+    function renderMore(count) {
+      const nextItems = GALLERY_ITEMS.slice(renderedCount, renderedCount + count);
+
+      nextItems.forEach((item, i) => {
+        const figure = document.createElement('figure');
+        figure.className = 'photo-item ' + item.orientation;
+
+        const img = document.createElement('img');
+        img.src = item.thumb;
+        img.dataset.preview = item.preview;
+        img.dataset.original = item.original;
+        img.alt = item.title;
+        img.loading = renderedCount + i < 4 ? 'eager' : 'lazy';
+        img.decoding = 'async';
+        img.width = item.w;
+        img.height = item.h;
+
+        img.addEventListener('click', () => {
+          openLightbox(
+            item.preview,
+            item.original,
+            item.original.split('/').pop()
+          );
+        });
+
+        figure.appendChild(img);
+        gallery.appendChild(figure);
+      });
+
+      renderedCount += nextItems.length;
+
+      if (renderedCount >= GALLERY_ITEMS.length) {
+        loadMoreBtn.textContent = '已经到底啦';
+        loadMoreBtn.disabled = true;
+      } else {
+        loadMoreBtn.textContent = `加载更多照片（${renderedCount} / ${GALLERY_ITEMS.length}）`;
+      }
     }
 
     closeBtn.addEventListener('click', closeLightbox);
@@ -395,6 +176,12 @@
         closeLightbox();
       }
     });
+
+    loadMoreBtn.addEventListener('click', () => {
+      renderMore(LOAD_MORE_COUNT);
+    });
+
+    renderMore(INITIAL_COUNT);
   </script>
 
 </body>
